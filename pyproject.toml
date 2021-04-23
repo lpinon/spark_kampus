@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "angelou"
-version = "0.1.0"
-description = ""
-authors = ["MrPowers <matthewkevinpowers@gmail.com>"]
+name = "pyspark-starter"
+version = "0.0.1"
+description = "Pyspark Starter Template"
+authors = ["LuisPi <info@capgemini.com>", "MrPowers <matthewkevinpowers@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.7"

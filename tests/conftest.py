@@ -1,9 +1,7 @@
 import pytest
-from pyspark.sql import SparkSession
+from main.config.sparksession import ss
+
 
 @pytest.fixture(scope='session')
 def spark():
-    return SparkSession.builder \
-      .master("local") \
-      .appName("angelou") \
-      .getOrCreate()
+    return ss
