@@ -1,5 +1,4 @@
 from pyspark.sql import SparkSession
-
 ss = (SparkSession.builder
       .master("local[4]")
       .appName("sparkapp")
@@ -10,5 +9,6 @@ ss = (SparkSession.builder
       .getOrCreate())
 # noinspection PyUnresolvedReferences
 from delta.tables import DeltaTable
+Delta = DeltaTable
 ss.sparkContext.setLogLevel("INFO")
 sc = ss.sparkContext

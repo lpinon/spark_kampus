@@ -1,11 +1,11 @@
-from config.sparksession import sc, ss, DeltaTable
+from config.sparksession import sc, ss, Delta
 from pyspark.sql.functions import lit, col, current_timestamp
 
 
 def main():
     data = ss.range(1, 5000)
     data = data.withColumn("somedata", lit("a"))
-    data = data.withColumn("ts", current_timestamp())
+    data = data.withColumn("ts", current_timestamp()).repartition(1)
     data.write.format("delta").mode("overwrite").partitionBy(['somedata']).save("delta/delta_sample")
 
     new_data = ss.range(3000, 10000)
@@ -13,11 +13,11 @@ def main():
     new_data = new_data.withColumn("ts", current_timestamp())
     new_data.write.format("delta").mode("overwrite").partitionBy(['somedata']).save("delta/delta_sample2")
 
-    delta_b = DeltaTable.forPath(ss, "delta/delta_sample2")
+    delta_b = Delta.forPath(ss, "delta/delta_sample2")
     delta_b.delete("id >= 8000")
-    delta_b.update(condition="id > 6500", set={"somedata": "'c'"})
+    delta_b.update(condition="id > 6500", set={"somedata": lit('c')})
 
-    delta_a = DeltaTable.forPath(ss, "delta/delta_sample")
+    delta_a = Delta.forPath(ss, "delta/delta_sample")
     delta_a.alias("delta_merge").merge(
         delta_b.toDF().alias("updates"),
         "delta_merge.id = updates.id") \
