@@ -19,4 +19,3 @@ def with_clean_first_name(df):
         "clean_first_name",
         quinn.remove_non_word_characters(F.col("first_name"))
     )
-

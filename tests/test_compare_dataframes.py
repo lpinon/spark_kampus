@@ -3,7 +3,7 @@ import chispa
 
 
 def test_compare_dataframes(spark):
-    df1 = spark.createDataFrame(
+    df1 = spark.spark_session.createDataFrame(
         [
             ("Alice", 1500),
             ("Bob", 1000),
@@ -12,7 +12,7 @@ def test_compare_dataframes(spark):
         ],
         ["name", "count"]
     )
-    df2 = spark.createDataFrame(
+    df2 = spark.spark_session.createDataFrame(
         [
             ("Alice", 1500),
             ("Bob", 1000),

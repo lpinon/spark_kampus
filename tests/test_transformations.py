@@ -1,6 +1,6 @@
 from pyspark.sql.types import *
 
-from main.config.sparksession import ss
+from tests.conftest import SparkConfiguration
 import main.examples as T
 from quinn.extensions import create_df
 import chispa
@@ -8,12 +8,12 @@ import chispa
 
 class TestTransformations(object):
 
-    def test_with_greeting(self):
+    def test_with_greeting(self, spark):
         source_data = [
             ("jose", 1),
             ("li", 2)
         ]
-        source_df = ss.createDataFrame(
+        source_df = spark.spark_session.createDataFrame(
             source_data,
             ["name", "age"]
         )
@@ -22,18 +22,18 @@ class TestTransformations(object):
             ("jose", 1, "hello!"),
             ("li", 2, "hello!")
         ]
-        expected_df = ss.createDataFrame(
+        expected_df = spark.spark_session.createDataFrame(
             expected_data,
             ["name", "age", "greeting"]
         )
         chispa.assert_df_equality(actual_df, expected_df, ignore_nullable=True)
 
-    def test_with_greeting2(self):
+    def test_with_greeting2(self, spark):
         source_data = [
             ("jose", 1),
             ("li", 2)
         ]
-        source_df = ss.createDataFrame(
+        source_df = spark.spark_session.createDataFrame(
             source_data,
             ["name", "age"]
         )
@@ -42,19 +42,19 @@ class TestTransformations(object):
             ("jose", 1, "hi"),
             ("li", 2, "hi")
         ]
-        expected_df = ss.createDataFrame(
+        expected_df = spark.spark_session.createDataFrame(
             expected_data,
             ["name", "age", "greeting"]
         )
         chispa.assert_df_equality(actual_df, expected_df, ignore_nullable=True)
 
-    def test_with_clean_first_name(self):
-        source_df = ss.create_df(
+    def test_with_clean_first_name(self, spark):
+        source_df = spark.spark_session.create_df(
             [("jo&&se", "a"), ("##li", "b"), ("!!sam**", "c")],
             [("first_name", StringType(), True), ("letter", StringType(), True)]
         )
         actual_df = T.with_clean_first_name(source_df)
-        expected_df = ss.create_df(
+        expected_df = spark.spark_session.create_df(
             [("jo&&se", "a", "jose"), ("##li", "b", "li"), ("!!sam**", "c", "sam")],
             [("first_name", StringType(), True), ("letter", StringType(), True),
              ("clean_first_name", StringType(), True)]
