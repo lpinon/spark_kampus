@@ -16,7 +16,7 @@ class DeltaConnector:
             .getConf().get(Constants.CURRENT_DATA_DELTA_TABLE_NAME)
         self.delta_src = self.spark_configuration.spark_session.sparkContext\
             .getConf().get(Constants.DELTA_SRC)
-        if not self.current_data_table_name:
+        if not self.current_data_table_name or not self.delta_src:
             raise ConfigNotFoundError
 
     def _generate_test_data(self) -> DataFrame:
@@ -31,7 +31,7 @@ class DeltaConnector:
             .format("delta")\
             .mode("overwrite")\
             .partitionBy(['somedata'])\
-            .save("delta/" + self.current_data_table_name)
+            .save(self.delta_src + self.current_data_table_name)
 
     def get_current_data(self) -> DeltaTable:
         try:
