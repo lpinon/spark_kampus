@@ -10,12 +10,11 @@ from delta.tables import DeltaTable
 
 
 class DeltaConnector:
+
     def __init__(self, config: SparkConfiguration):
         self.spark_configuration = config
-        self.current_data_table_name = self.spark_configuration.spark_session.sparkContext\
-            .getConf().get(Constants.CURRENT_DATA_DELTA_TABLE_NAME)
-        self.delta_src = self.spark_configuration.spark_session.sparkContext\
-            .getConf().get(Constants.DELTA_SRC)
+        self.current_data_table_name = self.spark_configuration.get_config(Constants.CURRENT_DATA_DELTA_TABLE_NAME)
+        self.delta_src = self.spark_configuration.get_config(Constants.DELTA_SRC)
         if not self.current_data_table_name or not self.delta_src:
             raise ConfigNotFoundError
 
