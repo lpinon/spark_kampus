@@ -1,6 +1,5 @@
 # Pyspark Starter template
-A starter TEMPLATE for pyspark applications with Deltalakes. Includes [Quinn](https://github.com/MrPowers/quinn) & [Chispa](https://github.com/MrPowers/chispa) libraries for smooth programming and testing.
-
+Example implementation for Spark Kampus use cases using PySpark and Kafka.
 # Run the application
 
 ## Dependencies

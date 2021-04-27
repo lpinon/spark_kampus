@@ -21,7 +21,7 @@ def main():
         Constants.POSTGRESQL_HOST: Constants.POSTGRESQL_HOST_VALUE,
         Constants.KAFKA_SERVER: Constants.KAFKA_SERVER_NAME
     }
-    spark_configuration = SparkConfiguration(app_name="Visits and ads ingestion", spark_master="local[*]",
+    spark_configuration = SparkConfiguration(app_name="visits_ads_event_ingestion", spark_master="local[*]",
                                              log_level="INFO", configuration=config)
 
     dataframe = PostgreSQLConnector(spark_configuration).get_table('video')
