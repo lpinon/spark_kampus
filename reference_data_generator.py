@@ -1,9 +1,8 @@
 from pyspark.sql.types import StructType, StringType, StructField, IntegerType, TimestampType
 
-import random_generator
+from simulator import random_generator
 from main.config.spark_config import SparkConfiguration
 import main.config.constants as Constants
-from main.connectors.kafka_connector import KafkaConnector
 from main.connectors.postgresql_connector import PostgreSQLConnector
 
 
