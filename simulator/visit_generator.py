@@ -35,7 +35,7 @@ class VisitGenerator:
 
     def generate_random_visits(self, amount=1000):
         random_users = choose_from_list(self.possible_users, amount)
-        random_videos = choose_from_list(self.possible_videos, amount)
+        random_videos = choose_from_list(self.possible_videos, 1000)
         random_devices = choose_from_list(self.possible_devices, amount)
         random_visits = []
         for i, random_user in enumerate(random_users):
