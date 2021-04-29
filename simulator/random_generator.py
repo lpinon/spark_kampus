@@ -3,6 +3,7 @@ from random import choices, choice
 from faker import Faker
 
 Faker.seed(0)
+fake_generator = Faker()
 
 # English Spanish French German Chinese Italian
 population_languages = [1, 2, 3, 4, 5, 6]
@@ -47,9 +48,20 @@ def generate_random_languages(amount=10 ** 6):
     return choices(population_languages, languages_weights, k=amount)
 
 
+def choose_from_list(values: [], amount=1) -> []:
+    return choices(values, k=amount)
+
+
+def get_random_location_from_country(country_code: int) -> int:
+    return choose_from_list(location_countries[country_code])[0]
+
+
+def get_random_video_by_category(videos: [], category: str) -> int:
+    return choose_from_list([el[0] for el in videos if el[2] == category])[0]
+
+
 def generate_random_videos(amount_users=10 ** 6):
-    fake_generator = Faker()
-    influencer_amounts = choices(population_influencer, influencer_weights, k=amount_users+10)
+    influencer_amounts = choices(population_influencer, influencer_weights, k=amount_users + 10)
     videos = []
     for user_id in range(1, amount_users + 1):
         if user_id % 2 == 0:  # Only half of users upload a video
@@ -69,7 +81,6 @@ def generate_random_videos(amount_users=10 ** 6):
 
 
 def generate_random_users(amount=10 ** 6):
-    fake_generator = Faker()
     profiles = []
     # Half of population young
     young_amount = amount // 2
