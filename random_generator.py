@@ -2,6 +2,8 @@ import datetime
 from random import choices, choice
 from faker import Faker
 
+Faker.seed(0)
+
 # English Spanish French German Chinese Italian
 population_languages = [1, 2, 3, 4, 5, 6]
 languages_weights = [0.4, 0.3, 0.1, 0.05, 0.1, 0.05]
@@ -34,14 +36,39 @@ location_countries = {
     110: [6, 11, 18]
 }
 
-population_categories = ["HUMOR", "TECHNOLOGY", "GAMING", "COOKING", "NEWS", "DOCUMENTARY"]
+population_categories = ["HUMOR", "TECHNOLOGY", "GAMING", "COOKING", "NEWS", "DOCUMENTARY", "MUSIC"]
+categories_weights = [0.25, 0.1, 0.2, 0.1, 0.05, 0.05, 0.25]
+
+population_influencer = [20, 50, 100, 200]
+influencer_weights = [0.5, 0.3, 0.15, 0.05]
 
 
 def generate_random_languages(amount=10 ** 6):
     return choices(population_languages, languages_weights, k=amount)
 
 
-def generate_random_users(amount=10 ** 4):
+def generate_random_videos(amount_users=10 ** 6):
+    fake_generator = Faker()
+    influencer_amounts = choices(population_influencer, influencer_weights, k=amount_users+10)
+    videos = []
+    for user_id in range(1, amount_users + 1):
+        if user_id % 2 == 0:  # Only half of users upload a video
+            possible_video_amounts = [influencer_amounts[user_id] + el for el in range(-15, 20)]
+            number_of_videos = choice(possible_video_amounts)
+            video_languages = choices(population_languages, languages_weights, k=number_of_videos)
+            video_categories = choices(population_categories, categories_weights, k=number_of_videos)
+            for n_video in range(number_of_videos):  # Uploaded this amount of videos
+                new_video = {
+                    "id_user": user_id,
+                    "title": fake_generator.sentence(nb_words=6),
+                    "id_language": video_languages[n_video],
+                    "category": video_categories[n_video]
+                }
+                videos.append(new_video)
+    return videos
+
+
+def generate_random_users(amount=10 ** 6):
     fake_generator = Faker()
     profiles = []
     # Half of population young

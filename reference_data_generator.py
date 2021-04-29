@@ -26,7 +26,7 @@ def main():
         (us["username"], us["email"], us["birth_date"], us["gender"], us["phone_number"], us["id_country"])
         for us in visitors_data
     ])
-    schema = StructType([
+    schema_visitor = StructType([
         StructField('username', StringType(), False),
         StructField('email', StringType(), False),
         StructField('birth_date', TimestampType(), False),
@@ -35,8 +35,23 @@ def main():
         StructField('id_country', IntegerType(), False)
     ])
     # Create data frame
-    visitors_df = spark_configuration.spark_session.createDataFrame(rdd_visitors, schema)
+    visitors_df = spark_configuration.spark_session.createDataFrame(rdd_visitors, schema_visitor)
     PostgreSQLConnector(spark_configuration).store(visitors_df, "visitors")
+    
+    videos_data = random_generator.generate_random_videos(10 ** 5)
+    videos_rdd = spark_configuration.spark_session.sparkContext.parallelize([
+         (vid["id_user"], vid["title"], vid["id_language"], vid["category"])
+         for vid in videos_data
+     ])
+    schema_videos = StructType([
+        StructField('id_user', IntegerType(), False),
+        StructField('title', StringType(), False),
+        StructField('id_language', IntegerType(), False),
+        StructField('category', StringType(), False),
+    ])
+    # Create data frame
+    videos_df = spark_configuration.spark_session.createDataFrame(videos_rdd, schema_videos)
+    PostgreSQLConnector(spark_configuration).store(videos_df, "video")
 
 
 if __name__ == "__main__":
