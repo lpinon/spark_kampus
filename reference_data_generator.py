@@ -37,7 +37,7 @@ def main():
     # Create data frame
     visitors_df = spark_configuration.spark_session.createDataFrame(rdd_visitors, schema_visitor)
     PostgreSQLConnector(spark_configuration).store(visitors_df, "visitors")
-    
+
     videos_data = random_generator.generate_random_videos(10 ** 5)
     videos_rdd = spark_configuration.spark_session.sparkContext.parallelize([
          (vid["id_user"], vid["title"], vid["id_language"], vid["category"])
