@@ -1,5 +1,8 @@
 from pyspark.sql import SparkSession
 import os
+
+from pyspark.streaming import StreamingContext
+
 from main.config.constants import *
 from main.exceptions.ConfigNotFoundError import ConfigNotFoundError
 
@@ -19,6 +22,13 @@ class SparkConfiguration:
             spark_config.config(key, value)
         self.spark_session = spark_config.getOrCreate()
         self.spark_session.sparkContext.setLogLevel(self.log_level)
+        self.ssc = None
+
+    def get_streaming_context(self, interval_seconds=5, checkpoints="event_ingestion_checkpoint") -> StreamingContext:
+        if self.ssc is None:
+            self.ssc = StreamingContext(self.spark_session.sparkContext, interval_seconds)
+            self.ssc.checkpoint(checkpoints)
+        return self.ssc
 
     def get_config(self, key: str) -> str:
         try:

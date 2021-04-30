@@ -1,7 +1,14 @@
 from main.config.spark_config import SparkConfiguration
 import main.config.constants as Constants
-from main.connectors.kafka_connector import KafkaConnector
 from main.connectors.postgresql_connector import PostgreSQLConnector
+from main.connectors.kafka_connector import KafkaConnector
+
+
+def foreach_batch_function(df, epoch_id):
+    print(epoch_id)
+    df.show(truncate=False)
+    print(df.count())
+    pass
 
 
 def main():
@@ -12,6 +19,7 @@ def main():
                                "org.apache.spark:spark-streaming-kafka-0-10_2.12:3.0.0,"
                                "org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.0",
         "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension",
+        "spark.driver.memory": "8g",
         "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog",
         Constants.CURRENT_DATA_DELTA_TABLE_NAME: Constants.CURRENT_DATA,
         Constants.DELTA_SRC_PATH: Constants.DELTA_LOCATION,
@@ -19,16 +27,16 @@ def main():
         Constants.POSTGRESQL_USER: Constants.POSTGRESQL_USER_VALUE,
         Constants.POSTGRESQL_PASSWORD: Constants.POSTGRESQL_PASSWORD_VALUE,
         Constants.POSTGRESQL_HOST: Constants.POSTGRESQL_HOST_VALUE,
-        Constants.KAFKA_SERVER: Constants.KAFKA_SERVER_NAME
+        Constants.KAFKA_SERVER: Constants.KAFKA_SERVER_NAME,
     }
     spark_configuration = SparkConfiguration(app_name="visits_ads_event_ingestion", spark_master="local[*]",
-                                             log_level="INFO", configuration=config)
+                                             log_level="WARN", configuration=config)
 
-    dataframe = PostgreSQLConnector(spark_configuration).get_table('video')
-    dataframe.show(truncate=False)
+    KafkaConnector(spark_configuration).get_stream('visits').load()\
+        .writeStream.foreachBatch(foreach_batch_function).start()
 
-    KafkaConnector(spark_configuration).get_stream('test').load()\
-        .writeStream.format("console").outputMode("append").start().awaitTermination(30)
+    spark_configuration.spark_session.streams.awaitAnyTermination()
+    #.format("console").outputMode("append").start().awaitTermination(30)
 
 
 if __name__ == "__main__":
