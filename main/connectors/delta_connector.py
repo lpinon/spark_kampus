@@ -12,7 +12,22 @@ from delta.tables import DeltaTable
 class DeltaConnector:
     def __init__(self, config: SparkConfiguration):
         self.spark_configuration = config
-        self.current_data_table_name = self.spark_configuration.get_config(Constants.CURRENT_DATA_DELTA_TABLE_NAME)
         self.delta_src = self.spark_configuration.get_config(Constants.DELTA_SRC_PATH)
-        if not self.current_data_table_name or not self.delta_src:
+        if not self.delta_src:
             raise ConfigNotFoundError
+
+    def update_or_insert(self, new_data: DataFrame, table: str, id_col: str):
+        try:
+            delta_table = DeltaTable.forPath(self.spark_configuration.spark_session, self.delta_src + table)
+        except AnalysisException:
+            # If delta table not exists just create it
+            new_data.write \
+                .format("delta") \
+                .save(self.delta_src + table)
+            return
+        delta_table.alias("current_data").merge(
+            new_data.alias("updates"),
+            "current_data.{0} = updates.{0}".format(id_col)) \
+            .whenMatchedUpdateAll() \
+            .whenNotMatchedInsertAll() \
+            .execute()

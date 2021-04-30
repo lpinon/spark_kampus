@@ -8,7 +8,6 @@ POSTGRESQL_HOST = "POSTGRESQL_HOST"
 KAFKA_SERVER = "KAFKA_SERVER"
 
 # CONFIG VALUES - in separate source
-CURRENT_DATA = "current_data"
 DELTA_LOCATION = "delta/"
 POSTGRESQL_DB_VALUE = "postgres"
 POSTGRESQL_USER_VALUE = "kampus"
@@ -28,3 +27,12 @@ VISITS_VIDEO_ID = "id_video"
 VISITS_DEVICE_ID = "id_device"
 VISITS_LOCATION_ID = "id_location"
 VISITS_VISIT_TIMESTAMP = "visit_date"
+
+# DELTA model config
+
+##################
+# VISITS X VIDEO #
+##################
+VISITSXVIDEO_TABLE = "visits"
+VISITSXVIDEO_VIDEO_ID = "id_video"
+VISITSXVIDEO_COUNT = "count"

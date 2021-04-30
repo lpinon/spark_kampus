@@ -13,8 +13,8 @@ def main():
                                "org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.0",
         "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension",
         "spark.driver.memory": "8g",
+        "spark.scheduler.mode": "FAIR",
         "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog",
-        Constants.CURRENT_DATA_DELTA_TABLE_NAME: Constants.CURRENT_DATA,
         Constants.DELTA_SRC_PATH: Constants.DELTA_LOCATION,
         Constants.POSTGRESQL_DB: Constants.POSTGRESQL_DB_VALUE,
         Constants.POSTGRESQL_USER: Constants.POSTGRESQL_USER_VALUE,
@@ -23,7 +23,7 @@ def main():
         Constants.KAFKA_SERVER: Constants.KAFKA_SERVER_NAME,
     }
     spark_configuration = SparkConfiguration(app_name="visits_ads_event_ingestion", spark_master="local[*]",
-                                             log_level="INFO", configuration=config)
+                                             log_level="WARN", configuration=config)
     import main.orchestrator as Orchestrator
 
     ########################

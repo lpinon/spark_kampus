@@ -9,7 +9,7 @@ from main.exceptions.ConfigNotFoundError import ConfigNotFoundError
 
 class SparkConfiguration:
     def __init__(self, app_name="my_pyspark_app", spark_master="local[*]", log_level="INFO",
-                 parallelism=4, data_partitions=2, configuration={}):
+                 parallelism=2, data_partitions=2, configuration={}):
         # GET ENV VARIABLE
         level = os.getenv('LOG_LEVEL')
         self.log_level = level if level is not None else log_level

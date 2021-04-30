@@ -26,7 +26,6 @@ def main():
     config = {
         "spark.jars.packages": "org.postgresql:postgresql:9.4.1211",
         "spark.driver.memory": "8g",
-        Constants.CURRENT_DATA_DELTA_TABLE_NAME: Constants.CURRENT_DATA,
         Constants.DELTA_SRC_PATH: Constants.DELTA_LOCATION,
         Constants.POSTGRESQL_DB: Constants.POSTGRESQL_DB_VALUE,
         Constants.POSTGRESQL_USER: Constants.POSTGRESQL_USER_VALUE,
