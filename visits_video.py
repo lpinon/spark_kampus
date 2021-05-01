@@ -21,29 +21,22 @@ def main():
         Constants.POSTGRESQL_HOST: Constants.POSTGRESQL_HOST_VALUE,
         Constants.KAFKA_SERVER: Constants.KAFKA_SERVER_NAME,
     }
-    spark_configuration = SparkConfiguration(app_name="visits_ads_event_ingestion", spark_master="local[*]",
+    spark_configuration = SparkConfiguration(app_name="visits_video_processor", spark_master="local[*]",
                                              log_level="WARN", configuration=config)
+    from main.connectors.delta_connector import DeltaConnector
     import main.orchestrator as Orchestrator
 
-    ########################
-    # Visit events ingestion
-    ########################
-
-    visits_schema = StructType([
-        StructField('id_user', IntegerType(), False),
-        StructField('id_video', IntegerType(), False),
-        StructField('id_device', IntegerType(), False),
-        StructField('id_location', IntegerType(), False),
-        StructField('visit_date', TimestampType(), True)
-    ])
-    visits_stream = KafkaConnector(spark_configuration).get_stream('visits', start_from_begining=False).load()
-    visits_stream = extract_json_data(visits_stream, visits_schema)
+    visits_video = DeltaConnector(spark_configuration).get_stream(Constants.VISITSXVIDEO_TABLE)
 
     # For each micro-batch of visit events
-    visits_stream.writeStream \
-        .option("checkpointLocation", "checkpoint/visits") \
-        .foreachBatch(lambda visits_batch, index: Orchestrator.ingest_visits(visits_batch, spark_configuration, index))\
+    visits_video.writeStream \
+        .option("checkpointLocation", "checkpoint/visits_video") \
+        .foreachBatch(lambda visits_video_batch, index: Orchestrator.ingest_video_visits(visits_video_batch,
+                                                                                         spark_configuration,
+                                                                                         index)) \
+        .trigger(processingTime='20 seconds') \
         .start()
+
 
     # Await stream termination
     spark_configuration.spark_session.streams.awaitAnyTermination()

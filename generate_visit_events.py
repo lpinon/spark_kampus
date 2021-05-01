@@ -1,3 +1,4 @@
+import datetime
 import json
 import time
 
@@ -49,11 +50,15 @@ def main():
         sleep_time = input("Sleep ms (default 10ms):")
         sleep_time = int(sleep_time) if sleep_time != '' else 10
         generated_visits = visits_generator.generate_visits()
-        for i in range(len(generated_visits)):
-            value_to_send = json.dumps(generated_visits[i], default=str).encode('utf-8')
-            print(value_to_send)
-            kafka_producer.send(KAFKA_TOPIC, value=value_to_send)
-            time.sleep(sleep_time / 1000)
+        loops = input("Number of loops (default 1):")
+        loops = int(loops) if loops != '' else 1
+        for _ in range(loops):
+            for i in range(len(generated_visits)):
+                generated_visits[i]["visit_date"] = datetime.datetime.now()
+                value_to_send = json.dumps(generated_visits[i], default=str).encode('utf-8')
+                print(value_to_send)
+                kafka_producer.send(KAFKA_TOPIC, value=value_to_send)
+                time.sleep(sleep_time / 1000)
 
 
 if __name__ == "__main__":
