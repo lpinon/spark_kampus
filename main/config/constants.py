@@ -17,6 +17,10 @@ KAFKA_SERVER_NAME = "localhost:9092"
 
 # Data model config
 
+VIDEOS_TABLE = "video"
+VIDEOS_ID = "id_video"
+VIDEOS_NAME = "title"
+
 ##########
 # VISITS #
 ##########
@@ -36,4 +40,5 @@ VISITS_VISIT_TIMESTAMP = "visit_date"
 VISITSXVIDEO_TABLE = "visits"
 VISITSXVIDEO_VIDEO_ID = "id_video"
 VISITSXVIDEO_COUNT = "count"
+VISITSXVIDEO_VIDEO_NAME = "video"
 VISITSXVIDEO_PRECOMPUTED_TABLE = "precomputed.video_views"

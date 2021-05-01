@@ -34,7 +34,7 @@ def main():
         Constants.POSTGRESQL_HOST: Constants.POSTGRESQL_HOST_VALUE,
         Constants.KAFKA_SERVER: Constants.KAFKA_SERVER_NAME
     }
-    spark_configuration = SparkConfiguration(app_name="visits_events_generator", spark_master="local[*]",
+    spark_configuration = SparkConfiguration(app_name="visits_events_generator", spark_master="local[2]",
                                              log_level="INFO", configuration=config)
     postgres_driver = PostgreSQLConnector(spark_configuration)
 

@@ -2,6 +2,7 @@ from pyspark.sql.types import StructType, StructField, StringType, TimestampType
 from main.config.spark_config import SparkConfiguration
 import main.config.constants as Constants
 from main.connectors.kafka_connector import KafkaConnector, extract_json_data
+from main.connectors.postgresql_connector import PostgreSQLConnector
 
 
 def main():
@@ -21,11 +22,12 @@ def main():
         Constants.POSTGRESQL_HOST: Constants.POSTGRESQL_HOST_VALUE,
         Constants.KAFKA_SERVER: Constants.KAFKA_SERVER_NAME,
     }
-    spark_configuration = SparkConfiguration(app_name="visits_video_processor", spark_master="local[*]",
+    spark_configuration = SparkConfiguration(app_name="visits_video_processor", spark_master="local[2]",
                                              log_level="WARN", configuration=config)
     from main.connectors.delta_connector import DeltaConnector
     import main.orchestrator as Orchestrator
 
+    videos_ref_df = PostgreSQLConnector(spark_configuration).get_table(Constants.VIDEOS_TABLE).cache()
     visits_video = DeltaConnector(spark_configuration).get_stream(Constants.VISITSXVIDEO_TABLE)
 
     # For each micro-batch of visit events
@@ -33,10 +35,11 @@ def main():
         .option("checkpointLocation", "checkpoint/visits_video") \
         .foreachBatch(lambda visits_video_batch, index: Orchestrator.ingest_video_visits(visits_video_batch,
                                                                                          spark_configuration,
-                                                                                         index)) \
-        .trigger(processingTime='20 seconds') \
+                                                                                         videos_ref_df,
+                                                                                         index
+                                                                                         )) \
+        .trigger(processingTime='30 seconds') \
         .start()
-
 
     # Await stream termination
     spark_configuration.spark_session.streams.awaitAnyTermination()
