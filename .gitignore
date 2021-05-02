@@ -8,3 +8,5 @@ dist/
 angelou.egg-info/
 delta
 checkpoint
+.venv
+.coverage

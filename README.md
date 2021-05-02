@@ -28,6 +28,21 @@ You can run all test scenarios using:
 python -m pytest
 ```
 
+## Run Tests with coverage
+You can run all test scenarios using:
+```
+python -m coverage run -m pytest
+```
+
+To display the coverage results:
+```
+coverage report
+```
+or with a nicer report as html page:
+```
+coverage html
+```
+
 # Repository Setup
 
 - `main.py`: Main entrypoint for creating + configuring the Spark session and launching the process.

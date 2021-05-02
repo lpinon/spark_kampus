@@ -3,6 +3,7 @@ from pyspark.sql.functions import current_timestamp, col, concat, lit
 import main.config.constants as Constants
 from pyspark.sql.functions import max as sparkMax
 
+
 def add_visit_id(df_visit: DataFrame) -> DataFrame:
     return df_visit.withColumn(Constants.VISITS_ID, concat(
         col(Constants.VISITS_USER_ID), lit("_"),
