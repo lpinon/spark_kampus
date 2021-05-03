@@ -7,3 +7,6 @@ tests/__pycache__/*.pyc
 dist/
 angelou.egg-info/
 delta
+checkpoint
+.venv
+.coverage

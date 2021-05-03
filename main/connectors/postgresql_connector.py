@@ -46,13 +46,13 @@ class PostgreSQLConnector:
         self.store(new_dataframe_to_store, table)
 
     def delete_in(self, table: str, id_col: str, ids_to_delete: list):
-        ids_query = ", ".join(["'{}'".format(el) for el in ids_to_delete])
+        ids_query = ", ".join(["{}".format(el) for el in ids_to_delete])
         if len(ids_query) > 0:
             connection = psycopg2.connect(dbname=self.database, user=self.username, password=self.password,
                                           host=self.host)
             with connection:
                 with connection.cursor() as curs:
-                    curs.execute("DELETE FROM {0} WHERE {1} IN {2}".format(table, id_col, ids_query))
+                    curs.execute("DELETE FROM {0} WHERE {1} IN ({2})".format(table, id_col, ids_query))
             # leaving contexts doesn't close the connection
             connection.close()
 
