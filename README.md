@@ -17,9 +17,13 @@ Poetry will take care of:
 
 ## Running on local
 
-Start the process with the command:
+Start the Event Ingestion (visits and ads) process with the command:
 ```
-python main/main.py  
+python event_ingestion.py 
+```
+Start the Visits x Video event ingestion with the command:
+```
+python visits_video.py 
 ```
 
 ## Run Tests
