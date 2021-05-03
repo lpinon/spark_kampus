@@ -1,14 +1,7 @@
+from pyspark.sql.types import StructType, StructField, StringType, TimestampType, IntegerType
 from main.config.spark_config import SparkConfiguration
 import main.config.constants as Constants
-from main.connectors.postgresql_connector import PostgreSQLConnector
-from main.connectors.kafka_connector import KafkaConnector
-
-
-def foreach_batch_function(df, epoch_id):
-    print(epoch_id)
-    df.show(truncate=False)
-    print(df.count())
-    pass
+from main.connectors.kafka_connector import KafkaConnector, extract_json_data
 
 
 def main():
@@ -30,13 +23,30 @@ def main():
         Constants.KAFKA_SERVER: Constants.KAFKA_SERVER_NAME,
     }
     spark_configuration = SparkConfiguration(app_name="visits_ads_event_ingestion", spark_master="local[*]",
-                                             log_level="WARN", configuration=config)
+                                             log_level="INFO", configuration=config)
+    import main.orchestrator as Orchestrator
 
-    KafkaConnector(spark_configuration).get_stream('visits').load()\
-        .writeStream.foreachBatch(foreach_batch_function).start()
+    ########################
+    # Visit events ingestion
+    ########################
 
+    visits_schema = StructType([
+        StructField('id_user', IntegerType(), False),
+        StructField('id_video', IntegerType(), False),
+        StructField('id_device', IntegerType(), False),
+        StructField('id_location', IntegerType(), False),
+        StructField('visit_date', TimestampType(), True)
+    ])
+    visits_stream = KafkaConnector(spark_configuration).get_stream('visits', start_from_begining=False).load()
+    visits_stream = extract_json_data(visits_stream, visits_schema)
+
+    # For each micro-batch of visit events
+    visits_stream.writeStream\
+        .foreachBatch(lambda visits_batch, index: Orchestrator.ingest_visits(visits_batch, spark_configuration, index))\
+        .start()
+
+    # Await stream termination
     spark_configuration.spark_session.streams.awaitAnyTermination()
-    #.format("console").outputMode("append").start().awaitTermination(30)
 
 
 if __name__ == "__main__":

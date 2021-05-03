@@ -15,3 +15,16 @@ POSTGRESQL_USER_VALUE = "kampus"
 POSTGRESQL_PASSWORD_VALUE = "kampus"
 POSTGRESQL_HOST_VALUE = "localhost"
 KAFKA_SERVER_NAME = "localhost:9092"
+
+# Data model config
+
+##########
+# VISITS #
+##########
+VISITS_TABLE = "visit"
+VISITS_ID = "id_visit"
+VISITS_USER_ID = "id_user"
+VISITS_VIDEO_ID = "id_video"
+VISITS_DEVICE_ID = "id_device"
+VISITS_LOCATION_ID = "id_location"
+VISITS_VISIT_TIMESTAMP = "visit_date"
